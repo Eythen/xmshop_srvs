@@ -15,8 +15,8 @@ type BaseModel struct {
 
 type User struct {
 	BaseModel
-	Mobile   string     `gorm:"index:idx_mobile;unique;type:varchar(11); comment '手机号码' not null"`
-	Password string     `gorm:"type:varchar(100); comment '密码' not null"`
+	Mobile   string     `gorm:"index:idx_mobile;unique;type:varchar(11) comment '手机号码' not null"`
+	Password string     `gorm:"type:varchar(100) comment '密码' not null"`
 	NickName string     `gorm:"type:varchar(20) comment '昵称'"`
 	Birthday *time.Time `gorm:"type:datetime comment '出生日期'"`
 	Gender   string     `gorm:"column:gender;default:male;type:varchar(6) comment 'female表示女，male表示男'"`
