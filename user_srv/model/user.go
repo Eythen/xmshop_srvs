@@ -13,6 +13,14 @@ type BaseModel struct {
 	IsDeleted bool
 }
 
+/*
+1.密文2.密文不可反解
+
+	1.对称加密
+	2.非对称加密
+	3. md5信息摘要算法
+	密码如果不可以反解，用户找回密码
+*/
 type User struct {
 	BaseModel
 	Mobile   string     `gorm:"index:idx_mobile;unique;type:varchar(11) comment '手机号码' not null"`
