@@ -1,0 +1,68 @@
+package handler
+
+import (
+	"context"
+	"gorm.io/gorm"
+	"xmshop_srvs/user_srv/global"
+	"xmshop_srvs/user_srv/model"
+	"xmshop_srvs/user_srv/proto"
+)
+
+type UserServer struct {
+	*proto.UnimplementedUserServer
+}
+
+func ModelToResponse(user model.User) proto.UserInfoResponse {
+	//在grpc得message中字段有默认值，你不能随便赋值nil进去，容易出错
+	//这里要搞清楚，哪些字段是有默认值的
+	userInfoRsp := proto.UserInfoResponse{
+		Id:       uint32(user.ID),
+		Password: user.Password,
+		NickName: user.NickName,
+		Gender:   user.Gender,
+		Role:     int32(user.Role),
+	}
+	if user.Birthday != nil {
+		userInfoRsp.Birthday = uint64(user.Birthday.Unix())
+	}
+
+	return userInfoRsp
+}
+
+func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if page == 0 {
+			page = 1
+		}
+
+		switch {
+		case pageSize > 100:
+			pageSize = 100
+		case pageSize <= 0:
+			pageSize = 10
+		}
+
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
+}
+
+func (u *UserServer) GetUserList(ctx context.Context, req *proto.PageInfo) (*proto.UserListResponse, error) {
+	//获取用户列表
+	var users []model.User
+	result := global.DB.Find(&users)
+	if result != nil {
+		return nil, result.Error
+	}
+
+	rsp := &proto.UserListResponse{}
+	rsp.Total = int32(result.RowsAffected)
+
+	global.DB.Scopes(Paginate(int(req.Pn), int(req.PSize))).Find(&users)
+
+	for _, user := range users {
+		userInfoRsp := ModelToResponse(user)
+		rsp.Data = append(rsp.Data, &userInfoRsp)
+	}
+	return rsp, nil
+}
