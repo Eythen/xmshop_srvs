@@ -59,7 +59,7 @@ func (u *UserServer) GetUserList(ctx context.Context, req *proto.PageInfo) (*pro
 	//获取用户列表
 	var users []model.User
 	result := global.DB.Find(&users)
-	if result != nil {
+	if result.Error != nil {
 		return nil, result.Error
 	}
 
@@ -119,7 +119,7 @@ func (u *UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) 
 	//密码加密
 	options := &password.Options{16, 100, 32, sha512.New}
 	salt, encodedPwd := password.Encode(req.Password, options)
-	user.Password = fmt.Sprintf("$pbkdf2-sha512$%S$%s", salt, encodedPwd)
+	user.Password = fmt.Sprintf("$pbkdf2-sha512$%s$%s", salt, encodedPwd)
 
 	result = global.DB.Create(&user)
 	if result.Error != nil {
