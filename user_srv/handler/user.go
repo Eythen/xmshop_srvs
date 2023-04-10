@@ -5,9 +5,12 @@ import (
 	"crypto/sha512"
 	"fmt"
 	"github.com/anaskhan96/go-password-encoder"
+	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
+	"strings"
+	"time"
 	"xmshop_srvs/user_srv/global"
 	"xmshop_srvs/user_srv/model"
 	"xmshop_srvs/user_srv/proto"
@@ -125,4 +128,33 @@ func (u *UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) 
 
 	userInfoRsp := ModelToResponse(user)
 	return &userInfoRsp, nil
+}
+
+func (u *UserServer) UpdateUser(ctx context.Context, req *proto.UpdateUserInfo) (*empty.Empty, error) {
+	//个人中心更新用户
+	var user model.User
+	result := global.DB.First(&user, req.Id)
+	if result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "用户不存在")
+	}
+
+	birthDay := time.Unix(int64(req.Birthday), 0)
+	user.NickName = req.NickName
+	user.Birthday = &birthDay
+	user.Gender = req.Gender
+
+	result = global.DB.Save(user)
+	if result.Error != nil {
+		return nil, status.Errorf(codes.Internal, result.Error.Error())
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (u *UserServer) CheckPassword(ctx context.Context, req *proto.PasswordCheckInfo) (*proto.CheckResponse, error) {
+	//检验密码
+	options := &password.Options{16, 100, 32, sha512.New}
+	passwordInfo := strings.Split(req.EncryptedPassword, "$")
+	check := password.Verify(req.Password, passwordInfo[2], passwordInfo[3], options)
+	return &proto.CheckResponse{Success: check}, nil
 }
