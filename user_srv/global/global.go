@@ -1,20 +1,16 @@
 package global
 
 import (
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-	"gorm.io/gorm/schema"
-	"log"
-	"os"
-	"time"
+	"xmshop_srvs/user_srv/config"
 )
 
 var (
-	DB *gorm.DB
+	DB           *gorm.DB
+	ServerConfig config.ServerConfig
 )
 
-func init() {
+/*func init() {
 	dsn := "root:root@tcp(127.0.0.1:3305)/mxshop_user_srv?charset=utf8mb4&parseTime=True&loc=Local"
 
 	newLogger := logger.New(
@@ -38,3 +34,4 @@ func init() {
 		panic(err)
 	}
 }
+*/

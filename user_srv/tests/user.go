@@ -86,10 +86,10 @@ func TestUpdateUser() {
 
 func main() {
 	Init()
-	//TestGetUserList()
+	TestGetUserList()
 	//TestCreateUser()
 	//TestGetUserByMobile()
 	//TestGetUserById()
-	TestUpdateUser()
+	//TestUpdateUser()
 	defer conn.Close()
 }
