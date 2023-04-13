@@ -13,11 +13,12 @@ import (
 	"xmshop_srvs/user_srv/handler"
 	"xmshop_srvs/user_srv/initialize"
 	"xmshop_srvs/user_srv/proto"
+	"xmshop_srvs/user_srv/utils"
 )
 
 func main() {
 	IP := flag.String("ip", "0.0.0.0", "IP address")
-	Port := flag.Int("port", 50051, "Port number")
+	Port := flag.Int("port", 0, "Port number")
 
 	//初始化
 	initialize.InitLogger()
@@ -26,6 +27,9 @@ func main() {
 
 	flag.Parse()
 	zap.S().Info("ip:", *IP)
+	if *Port == 0 {
+		*Port, _ = utils.GetFreePort()
+	}
 	zap.S().Info("port:", *Port)
 
 	server := grpc.NewServer()
