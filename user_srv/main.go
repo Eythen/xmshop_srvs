@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"net"
 	"xmshop_srvs/user_srv/handler"
 	"xmshop_srvs/user_srv/initialize"
@@ -19,7 +21,7 @@ func main() {
 	initialize.InitLogger()
 	initialize.InitConfig()
 	initialize.InitDB()
-	
+
 	flag.Parse()
 	zap.S().Info("ip:", *IP)
 	zap.S().Info("port:", *Port)
@@ -30,6 +32,9 @@ func main() {
 	if err != nil {
 		panic("failed to listen:" + err.Error())
 	}
+	//注册服务健康检查
+	grpc_health_v1.RegisterHealthServer(server, health.NewServer())
+
 	err = server.Serve(lis)
 	if err != nil {
 		panic("failed to start grpc:" + err.Error())
