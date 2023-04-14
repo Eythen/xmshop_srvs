@@ -51,7 +51,7 @@ type Goods struct {
 	IsNew    bool `gorm:"default:false;not null;comment:是否新品"`
 	IsHot    bool `gorm:"default:false;not null;comment:是否热卖商品"`
 
-	Name            string   `gorm:"type:varchar(50);not null;comment:名称"`
+	Name            string   `gorm:"type:varchar(100);not null;comment:名称"`
 	GoodsSn         string   `gorm:"type:varchar(50);not null;comment:商品编号"`
 	ClickNum        int32    `gorm:"type:int;default:0;not null;comment:点击量"`
 	SoldNum         int32    `gorm:"type:int;default:0;not null;comment:销量"`
