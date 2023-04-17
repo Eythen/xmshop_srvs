@@ -10,7 +10,7 @@ import (
 	"xmshop_srvs/goods_srv/proto"
 )
 
-// 品牌和轮播图
+// 品牌
 func (g *GoodsServer) BrandList(c context.Context, req *proto.BrandFilterRequest) (*proto.BrandListResponse, error) {
 	brandListResponse := &proto.BrandListResponse{}
 
