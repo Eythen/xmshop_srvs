@@ -73,9 +73,9 @@ func InitConfig() {
 	//想要将一个json字符串转换成struct，需要去设置这个struct的tag
 	err = json.Unmarshal([]byte(content), &global.ServerConfig)
 	if err != nil {
-		zap.S().Fatal("读取nacos配置失败：%s", err.Error())
+		zap.S().Fatalf("读取nacos配置失败：%s", err.Error())
 	}
-	fmt.Println(&global.ServerConfig)
+	//fmt.Println(&global.ServerConfig)
 
 	//这个对象如何在其他文件中使用
 	//serverConfig := config.ServerConfig{}
@@ -87,10 +87,10 @@ func InitConfig() {
 	//viper的功能 - 动态监控变化
 	v.WatchConfig()
 	v.OnConfigChange(func(e fsnotify.Event) {
-		zap.S().Info("配置文件产生变化：%s", e.Name)
+		zap.S().Infof("配置文件产生变化：%s", e.Name)
 		_ = v.ReadInConfig()
 		_ = v.Unmarshal(global.ServerConfig)
-		zap.S().Info("配置信息：%v", global.ServerConfig)
+		zap.S().Infof("配置信息：%v", global.ServerConfig)
 	})
 }
 
