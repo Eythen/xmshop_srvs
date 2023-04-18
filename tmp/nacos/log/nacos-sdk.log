@@ -21,3 +21,4 @@
 2023-04-18T15:29:31.907+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
 2023-04-18T15:32:28.109+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
 2023-04-18T15:33:06.277+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
+2023-04-18T15:36:27.842+0800	[34mINFO[0m	clients/client_factory.go:47	logDir:<tmp/nacos/log>   cacheDir:<tmp/nacos/cache>
