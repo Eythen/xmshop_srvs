@@ -28,10 +28,10 @@ type GoodsCategoryBrand struct {
 	Brands     Brands
 }
 
-//// 重置表名
-//func (GoodsCategoryBrand) TableName() string {
-//	return "goodscategorybrand"
-//}
+// // 重置表名
+func (GoodsCategoryBrand) TableName() string {
+	return "goodscategorybrand"
+}
 
 type Banner struct {
 	BaseModel

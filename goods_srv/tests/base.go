@@ -20,6 +20,6 @@ func Init() {
 
 func main() {
 	Init()
-	TestGetSubCategoryList()
+	TestGetCategoryBrandList()
 	defer conn.Close()
 }
