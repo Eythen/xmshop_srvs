@@ -56,6 +56,49 @@ func (g *GoodsServer) GetSubCategory(c context.Context, req *proto.CategoryListR
 	return &categoryListResponse, nil
 }
 
-//CreateCategory(context.Context, *CategoryInfoRequest) (*CategoryInfoResponse, error)
-//DeleteCategory(context.Context, *DeleteCategoryRequest) (*emptypb.Empty, error)
-//UpdateCategory(context.Context, *CategoryInfoRequest) (*emptypb.Empty, error)
+func (g *GoodsServer) CreateCategory(c context.Context, req *proto.CategoryInfoRequest) (*proto.CategoryInfoResponse, error) {
+	category := model.Category{}
+
+	category.Name = req.Name
+	category.Level = req.Level
+	if category.Level != 1 {
+		//查询父级是否存在，也可以交由前端去查询后再调用该接口
+		category.ParentCategoryID = req.ParentCategory
+	}
+	category.IsTab = req.IsTab
+
+	global.DB.Save(&category)
+
+	return &proto.CategoryInfoResponse{Id: category.ID}, nil
+}
+
+func (g *GoodsServer) DeleteCategory(c context.Context, req *proto.DeleteCategoryRequest) (*emptypb.Empty, error) {
+	if result := global.DB.Delete(&model.Category{}, req.Id); result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "商品分类不存在")
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (g *GoodsServer) UpdateCategory(c context.Context, req *proto.CategoryInfoRequest) (*emptypb.Empty, error) {
+	var category model.Category
+
+	if result := global.DB.First(&category, req.Id); result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "商品分类不存在")
+	}
+
+	if req.Name != "" {
+		category.Name = req.Name
+	}
+	if req.ParentCategory != 0 {
+		category.ParentCategoryID = req.ParentCategory
+	}
+	if req.Level != 0 {
+		category.Level = req.Level
+	}
+	if req.IsTab {
+		category.IsTab = req.IsTab
+	}
+
+	global.DB.Save(&category)
+	return &emptypb.Empty{}, nil
+}
