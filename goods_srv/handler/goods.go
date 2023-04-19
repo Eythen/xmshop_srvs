@@ -45,6 +45,7 @@ func ModelToResponse(goods model.Goods) proto.GoodsInfoResponse {
 	}
 }
 
+// 商品接口
 func (g *GoodsServer) GoodsList(c context.Context, req *proto.GoodsFilterRequest) (*proto.GoodsListResponse, error) {
 	//关键词搜索、查询新品、查询热门商品、通过价格区间筛选、通过商品分类筛选
 	goodsListResponse := &proto.GoodsListResponse{}
@@ -106,12 +107,33 @@ func (g *GoodsServer) GoodsList(c context.Context, req *proto.GoodsFilterRequest
 	return goodsListResponse, nil
 }
 
-/*// 商品接口
-GoodsList(context.Context, *GoodsFilterRequest) (*GoodsListResponse, error)
 // 现在用户提交订单有多个商品，你得批量查询商品的信息吧
-BatchGetGoods(context.Context, *BatchGoodsIdInfo) (*GoodsListResponse, error)
-CreateGoods(context.Context, *CreateGoodsInfo) (*GoodsInfoResponse, error)
-DeleteGoods(context.Context, *DeleteGoodsInfo) (*emptypb.Empty, error)
-UpdateGoods(context.Context, *CreateGoodsInfo) (*emptypb.Empty, error)
-GetGoodsDetail(context.Context, *GoodInfoRequest) (*GoodsInfoResponse, error)
-*/
+func (g *GoodsServer) BatchGetGoods(c context.Context, req *proto.BatchGoodsIdInfo) (*proto.GoodsListResponse, error) {
+	goodsListResponse := &proto.GoodsListResponse{}
+	var goods []model.Goods
+
+	result := global.DB.Find(&goods, req.Id)
+	for _, good := range goods {
+		goodsInfoResponse := ModelToResponse(good)
+		goodsListResponse.Data = append(goodsListResponse.Data, &goodsInfoResponse)
+	}
+	goodsListResponse.Total = int32(result.RowsAffected)
+
+	return goodsListResponse, nil
+}
+
+func (g *GoodsServer) GetGoodsDetail(c context.Context, req *proto.GoodInfoRequest) (*proto.GoodsInfoResponse, error) {
+	var goods model.Goods
+	if result := global.DB.First(&goods, req.Id); result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "商品不存在")
+	}
+	goodsInfoResponse := ModelToResponse(goods)
+
+	return &goodsInfoResponse, nil
+}
+
+//func (g *GoodsServer) CreateGoods(c context.Context, req *proto.CreateGoodsInfo) (*proto.GoodsInfoResponse, error) {
+//}
+
+//DeleteGoods(context.Context, *DeleteGoodsInfo) (*emptypb.Empty, error)
+//UpdateGoods(context.Context, *CreateGoodsInfo) (*emptypb.Empty, error)

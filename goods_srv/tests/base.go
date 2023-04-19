@@ -20,6 +20,6 @@ func Init() {
 
 func main() {
 	Init()
-	TestGoodsList()
+	TestGetGoodsDetail()
 	defer conn.Close()
 }
