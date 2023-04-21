@@ -7,7 +7,7 @@ package model
 type Category struct {
 	BaseModel
 	Name             string      `gorm:"type:varchar(20);comment:名称;not null" json:"name"`
-	ParentCategoryID int32       `json:"parent"`
+	ParentCategoryID *int32      `json:"parent"`
 	ParentCategory   *Category   `json:"-"`
 	SubCategory      []*Category `gorm:"foreignKey:ParentCategoryID;references:ID" json:"sub_category"`
 	Level            int32       `gorm:"type:int;default:1;not null;comment:等级" json:"level"`

@@ -33,7 +33,7 @@ func (g *GoodsServer) CategoryBrandList(c context.Context, req *proto.CategoryBr
 			Category: &proto.CategoryInfoResponse{
 				Id:             categoryBrand.CategoryID,
 				Name:           categoryBrand.Category.Name,
-				ParentCategory: categoryBrand.Category.ParentCategoryID,
+				ParentCategory: *categoryBrand.Category.ParentCategoryID,
 				Level:          categoryBrand.Category.Level,
 				IsTab:          categoryBrand.Category.IsTab,
 			},

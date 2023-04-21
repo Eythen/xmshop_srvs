@@ -30,7 +30,7 @@ func (g *GoodsServer) GetSubCategory(c context.Context, req *proto.CategoryListR
 	categoryListResponse.Info = &proto.CategoryInfoResponse{
 		Id:             category.ID,
 		Name:           category.Name,
-		ParentCategory: category.ParentCategoryID,
+		ParentCategory: *category.ParentCategoryID,
 		Level:          category.Level,
 		IsTab:          category.IsTab,
 	}
@@ -42,12 +42,12 @@ func (g *GoodsServer) GetSubCategory(c context.Context, req *proto.CategoryListR
 		preloads = "SubCategory.SubCategory"
 	}
 
-	global.DB.Where(&model.Category{ParentCategoryID: req.Id}).Preload(preloads).Find(&subCategories)
+	global.DB.Where(&model.Category{ParentCategoryID: &req.Id}).Preload(preloads).Find(&subCategories)
 	for _, category := range subCategories {
 		subCategoriesResponse = append(subCategoriesResponse, &proto.CategoryInfoResponse{
 			Id:             category.ID,
 			Name:           category.Name,
-			ParentCategory: category.ParentCategoryID,
+			ParentCategory: *category.ParentCategoryID,
 			Level:          category.Level,
 			IsTab:          category.IsTab,
 		})
@@ -63,7 +63,7 @@ func (g *GoodsServer) CreateCategory(c context.Context, req *proto.CategoryInfoR
 	category.Level = req.Level
 	if category.Level != 1 {
 		//查询父级是否存在，也可以交由前端去查询后再调用该接口
-		category.ParentCategoryID = req.ParentCategory
+		category.ParentCategoryID = &req.ParentCategory
 	}
 	category.IsTab = req.IsTab
 
@@ -90,7 +90,7 @@ func (g *GoodsServer) UpdateCategory(c context.Context, req *proto.CategoryInfoR
 		category.Name = req.Name
 	}
 	if req.ParentCategory != 0 {
-		category.ParentCategoryID = req.ParentCategory
+		category.ParentCategoryID = &req.ParentCategory
 	}
 	if req.Level != 0 {
 		category.Level = req.Level
