@@ -56,7 +56,7 @@ func (g *GoodsServer) DeleteBanner(c context.Context, req *proto.BannerRequest) 
 
 func (g *GoodsServer) UpdateBanner(c context.Context, req *proto.BannerRequest) (*emptypb.Empty, error) {
 	banner := model.Banner{}
-	if result := global.DB.Delete(&banner, req.Id); result.RowsAffected == 0 {
+	if result := global.DB.First(&banner, req.Id); result.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "轮播图不存在")
 	}
 
