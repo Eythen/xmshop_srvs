@@ -182,29 +182,53 @@ func (g *GoodsServer) UpdateGoods(c context.Context, req *proto.CreateGoodsInfo)
 		return nil, status.Errorf(codes.NotFound, "商品不存在")
 	}
 
-	var category model.Category
-	if result := global.DB.First(&category, req.CategoryId); result.RowsAffected == 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "商品分类不存在")
+	if req.CategoryId != 0 {
+		var category model.Category
+		if result := global.DB.First(&category, req.CategoryId); result.RowsAffected == 0 {
+			return nil, status.Errorf(codes.InvalidArgument, "商品分类不存在")
+		}
+		goods.Category = category
+		goods.CategoryID = req.CategoryId
 	}
 
-	var brand model.Brands
-	if result := global.DB.First(&brand, req.BrandId); result.RowsAffected == 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "品牌不存在")
+	if req.BrandId != 0 {
+		var brand model.Brands
+		if result := global.DB.First(&brand, req.BrandId); result.RowsAffected == 0 {
+			return nil, status.Errorf(codes.InvalidArgument, "品牌不存在")
+		}
+		goods.Brands = brand
+		goods.BrandsID = req.BrandId
 	}
 
-	goods.Brands = brand
-	goods.BrandsID = req.BrandId
-	goods.Category = category
-	goods.CategoryID = req.CategoryId
-	goods.Name = req.Name
-	goods.GoodsSn = req.GoodsSn
-	goods.MarketPrice = req.MarketPrice
-	goods.ShopPrice = req.ShopPrice
-	goods.GoodsBrief = req.GoodsBrief
-	goods.ShipFree = req.ShipFree
-	goods.Images = req.Images
-	goods.DescImages = req.DescImages
-	goods.GoodsFrontImage = req.GoodsFrontImage
+	if req.Name != "" {
+		goods.Name = req.Name
+	}
+	if req.GoodsSn != "" {
+		goods.GoodsSn = req.GoodsSn
+	}
+	if req.MarketPrice != 0 {
+		goods.MarketPrice = req.MarketPrice
+	}
+	if req.ShopPrice != 0 {
+		goods.ShopPrice = req.ShopPrice
+	}
+	if req.GoodsBrief != "" {
+		goods.GoodsBrief = req.GoodsBrief
+	}
+	if goods.ShipFree || req.ShipFree {
+		goods.ShipFree = req.ShipFree
+	}
+
+	if len(req.Images) > 0 {
+		goods.Images = req.Images
+	}
+	if len(req.DescImages) > 0 {
+		goods.DescImages = req.DescImages
+	}
+	if req.GoodsFrontImage != "" {
+		goods.GoodsFrontImage = req.GoodsFrontImage
+	}
+
 	goods.IsNew = req.IsNew
 	goods.IsHot = req.IsHot
 	goods.OnSale = req.OnSale
